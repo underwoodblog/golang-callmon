@@ -30,7 +30,10 @@ func mainloop(host string) {
 
 	recv := make(chan fritzbox.FbEvent)
 
-	c := new(fritzbox.CallmonHandler).Connect(host, recv)
+	c, err := new(fritzbox.CallmonHandler).Connect(host, recv)
+	if err != nil {
+		return
+	}
 
 	defer c.Close()
 

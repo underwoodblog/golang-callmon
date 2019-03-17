@@ -44,28 +44,30 @@ func (e FbEvent) String() string {
 	return fmt.Sprintf("Event %s: %s", e.Timestamp, e.EventName)
 }
 
-func (c CallmonHandler) Connect(host string, recv chan FbEvent) CallmonHandler {
+func (c CallmonHandler) Connect(host string, recv chan FbEvent) (CallmonHandler, error) {
 	c.Host = host
 	c.event = recv
 
 	addr, err := net.ResolveTCPAddr("tcp", host+":1012")
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
+		c.Connected = false
+		return c, err
 	}
 
 	conn, err := net.DialTCP("tcp", nil, addr)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		c.Connected = false
-	} else {
-		c.Connected = true
+		return c, err
 	}
+	c.Connected = true
 
 	conn.SetKeepAlivePeriod(time.Duration(30) * time.Second)
 	conn.SetKeepAlive(true)
 
 	c.conn = conn
-	return c
+	return c, nil
 }
 
 func (c CallmonHandler) Close() {
