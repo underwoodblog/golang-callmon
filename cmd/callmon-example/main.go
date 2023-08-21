@@ -59,6 +59,6 @@ func main() {
 	for {
 		mainloop(host)
 		time.Sleep(1 * time.Second)
-		fmt.Println("reconnect…")
+		fmt.Println("reconnect...")
 	}
 }
